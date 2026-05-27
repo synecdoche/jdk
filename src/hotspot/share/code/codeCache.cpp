@@ -2011,6 +2011,11 @@ void CodeCache::write_perf_map(const char* filename, outputStream* st) {
                 (intptr_t)d->begin(), (intptr_t)d->size_in_bytes(),
                 d->group(), d->name());
   }
+  for (StubCodeDesc* d = StubCodeDesc::first(); d != nullptr; d = StubCodeDesc::next(d)) {
+    fs.print_cr(INTPTR_FORMAT " " INTPTR_FORMAT " %s %s",
+                (intptr_t)d->begin(), (intptr_t)d->size_in_bytes(),
+                d->group(), d->name());
+  }
 }
 #endif // LINUX
 
