@@ -1,6 +1,7 @@
 name: 'Revert JVMCI commit and push'
 
 on:
+  workflow_dispatch:
   schedule:
     - cron: "23 */2 * * *"
 
