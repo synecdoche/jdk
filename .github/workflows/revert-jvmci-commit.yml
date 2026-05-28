@@ -1,0 +1,33 @@
+name: 'Revert JVMCI commit and push'
+
+on:
+  schedule:
+    - cron: "23 */2 * * *"
+
+jobs:
+  revert-and-push:
+    name: 'Revert commit and force-push'
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+
+    steps:
+      - name: 'Check out openjdk/jdk master'
+        uses: actions/checkout@v4
+        with:
+          repository: openjdk/jdk
+          ref: master
+          fetch-depth: 0
+
+      - name: 'Revert commit'
+        id: revert
+        run: |
+          git config user.email "actions@github.com"
+          git config user.name "GitHub Actions"
+          git revert --no-edit 2acf0dc98a8caacbdae72e801d500def9efbeabc
+
+      - name: 'Force-push to openjdk-keep-jvmci-alive'
+        if: steps.revert.outcome == 'success'
+        run: |
+          git remote add target "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository_owner }}/jdk.git"
+          git push target HEAD:openjdk-keep-jvmci-alive --force
