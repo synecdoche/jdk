@@ -2489,9 +2489,9 @@ void G1CollectedHeap::gc_epilogue(bool full) {
     increment_old_marking_cycles_completed(false /* concurrent */, true /* liveness_completed */);
   }
 
-#ifdef COMPILER2
+#if COMPILER2_OR_JVMCI
   assert(DerivedPointerTable::is_empty(), "derived pointer present");
-#endif // COMPILER2
+#endif
 
   // We have just completed a GC. Update the soft reference
   // policy with the new heap occupancy

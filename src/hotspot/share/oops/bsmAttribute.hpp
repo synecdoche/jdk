@@ -86,6 +86,7 @@ public:
 // The BSMAttributeEntries stores the state of the BootstrapMethods attribute.
 class BSMAttributeEntries {
   friend class VMStructs;
+  friend class JVMCIVMStructs;
 
 public:
   class InsertionIterator {

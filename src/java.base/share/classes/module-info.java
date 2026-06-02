@@ -212,7 +212,9 @@ module java.base {
         jdk.jfr,
         jdk.jshell,
         jdk.nio.mapmode,
-        jdk.unsupported;
+        jdk.unsupported,
+        jdk.internal.vm.ci,
+        jdk.graal.compiler;
     exports jdk.internal.module to
         java.instrument,
         java.management.rmi,
@@ -237,15 +239,18 @@ module java.base {
         java.sql,
         java.sql.rowset,
         jdk.dynalink,
+        jdk.internal.vm.ci,
         jdk.unsupported;
     exports jdk.internal.vm to
         java.management,
         jdk.internal.jvmstat,
         jdk.management,
         jdk.management.agent,
+        jdk.internal.vm.ci,
         jdk.jfr;
     exports jdk.internal.vm.annotation to
         java.instrument,
+        jdk.internal.vm.ci,
         jdk.incubator.vector,
         jdk.jfr,
         jdk.unsupported;
@@ -265,6 +270,7 @@ module java.base {
         java.net.http,
         jdk.charsets,
         jdk.incubator.vector,
+        jdk.internal.vm.ci,
         jdk.httpserver,
         jdk.jlink,
         jdk.jpackage,

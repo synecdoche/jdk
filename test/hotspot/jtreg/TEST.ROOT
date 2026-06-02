@@ -67,6 +67,8 @@ requires.properties= \
     vm.gc.Shenandoah \
     vm.gc.Epsilon \
     vm.gc.Z \
+    vm.jvmci \
+    vm.jvmci.enabled \
     vm.cpu.features \
     vm.pageSize \
     vm.debug \
@@ -86,6 +88,9 @@ requires.properties= \
     vm.cds.write.streamed.java.heap \
     vm.continuations \
     vm.jvmti \
+    vm.graal.enabled \
+    jdk.hasLibgraal \
+    vm.libgraal.jit \
     vm.compiler1.enabled \
     vm.compiler2.enabled \
     vm.musl \

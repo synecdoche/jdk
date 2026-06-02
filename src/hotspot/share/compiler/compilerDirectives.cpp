@@ -191,7 +191,7 @@ DirectiveSet* CompilerDirectives::get_for(AbstractCompiler *comp) {
     return _c2_store;
   } else {
     // use c1_store as default
-    assert(comp->is_c1(), "");
+    assert(comp->is_c1() || comp->is_jvmci(), "");
     return _c1_store;
   }
 }
@@ -671,9 +671,9 @@ void DirectivesStack::init() {
   char str[] = "*.*";
   const char* error_msg = nullptr;
   _default_directives->add_match(str, error_msg);
-#ifdef COMPILER1
+#if defined(COMPILER1) || INCLUDE_JVMCI
   _default_directives->_c1_store->EnableOption = true;
-#endif // COMPILER1
+#endif
 #ifdef COMPILER2
   if (CompilerConfig::is_c2_enabled()) {
     _default_directives->_c2_store->EnableOption = true;

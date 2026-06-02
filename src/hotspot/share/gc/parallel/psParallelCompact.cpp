@@ -96,6 +96,9 @@
 #include "utilities/formatBuffer.hpp"
 #include "utilities/macros.hpp"
 #include "utilities/stack.inline.hpp"
+#if INCLUDE_JVMCI
+#include "jvmci/jvmci.hpp"
+#endif
 
 #include <math.h>
 
@@ -698,9 +701,9 @@ void PSParallelCompact::post_compact()
 
   heap->prune_scavengable_nmethods();
 
-#ifdef COMPILER2
+#if COMPILER2_OR_JVMCI
   DerivedPointerTable::update_pointers();
-#endif // COMPILER2
+#endif
 
   // Signal that we have completed a visit to all live objects.
   Universe::heap()->record_whole_heap_examined_timestamp();
@@ -974,9 +977,9 @@ bool PSParallelCompact::invoke(bool clear_all_soft_refs, bool should_do_max_comp
     // Let the size policy know we're starting
     size_policy->major_collection_begin();
 
-#ifdef COMPILER2
+#if COMPILER2_OR_JVMCI
     DerivedPointerTable::clear();
-#endif // COMPILER2
+#endif
 
     ref_processor()->start_discovery(clear_all_soft_refs);
 
@@ -984,10 +987,10 @@ bool PSParallelCompact::invoke(bool clear_all_soft_refs, bool should_do_max_comp
 
     summary_phase(should_do_max_compaction);
 
-#ifdef COMPILER2
+#if COMPILER2_OR_JVMCI
     assert(DerivedPointerTable::is_active(), "Sanity");
     DerivedPointerTable::set_active(false);
-#endif // COMPILER2
+#endif
 
     forward_to_new_addr();
 
@@ -1168,6 +1171,14 @@ public:
     _klass_cleaning_task() {}
 
   void work(uint worker_id) {
+#if INCLUDE_JVMCI
+    if (EnableJVMCI && worker_id == 0) {
+      // Serial work; only first worker.
+      // Clean JVMCI metadata handles.
+      JVMCI::do_unloading(_unloading_occurred);
+    }
+#endif
+
     // Do first pass of code cache cleaning.
     _code_cache_task.work(worker_id);
 

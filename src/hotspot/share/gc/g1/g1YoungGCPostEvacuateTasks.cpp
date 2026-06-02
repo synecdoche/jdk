@@ -444,7 +444,7 @@ public:
   }
 };
 
-#ifdef COMPILER2
+#if COMPILER2_OR_JVMCI
 class G1PostEvacuateCollectionSetCleanupTask2::UpdateDerivedPointersTask : public G1AbstractSubTask {
 public:
   UpdateDerivedPointersTask() : G1AbstractSubTask(G1GCPhaseTimes::UpdateDerivedPointers) { }
@@ -452,7 +452,7 @@ public:
   double worker_cost() const override { return 1.0; }
   void do_work(uint worker_id) override {   DerivedPointerTable::update_pointers(); }
 };
-#endif // COMPILER2
+#endif
 
 class G1PostEvacuateCollectionSetCleanupTask2::EagerlyReclaimHumongousObjectsTask : public G1AbstractSubTask {
   uint _humongous_regions_reclaimed;
@@ -888,9 +888,9 @@ G1PostEvacuateCollectionSetCleanupTask2::G1PostEvacuateCollectionSetCleanupTask2
                                                                                  G1EvacFailureRegions* evac_failure_regions) :
   G1BatchedTask("Post Evacuate Cleanup 2", G1CollectedHeap::heap()->phase_times())
 {
-#ifdef COMPILER2
+#if COMPILER2_OR_JVMCI
   add_serial_task(new UpdateDerivedPointersTask());
-#endif // COMPILER2
+#endif
   if (G1CollectedHeap::heap()->has_humongous_reclaim_candidates()) {
     add_serial_task(new EagerlyReclaimHumongousObjectsTask());
   }

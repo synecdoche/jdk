@@ -48,21 +48,21 @@
 #include "utilities/debug.hpp"
 
 static void clear_and_activate_derived_pointers() {
-#ifdef COMPILER2
+#if COMPILER2_OR_JVMCI
   DerivedPointerTable::clear();
-#endif // COMPILER2
+#endif
 }
 
 static void deactivate_derived_pointers() {
-#ifdef COMPILER2
+#if COMPILER2_OR_JVMCI
   DerivedPointerTable::set_active(false);
-#endif // COMPILER2
+#endif
 }
 
 static void update_derived_pointers() {
-#ifdef COMPILER2
+#if COMPILER2_OR_JVMCI
   DerivedPointerTable::update_pointers();
-#endif // COMPILER2
+#endif
 }
 
 G1CMBitMap* G1FullCollector::mark_bitmap() {
@@ -542,9 +542,9 @@ void G1FullCollector::verify_after_marking() {
     return;
   }
 
-#ifdef COMPILER2
+#if COMPILER2_OR_JVMCI
   DerivedPointerTableDeactivate dpt_deact;
-#endif // COMPILER2
+#endif
   _heap->prepare_for_verify();
   // Note: we can verify only the heap here. When an object is
   // marked, the previous value of the mark word (including

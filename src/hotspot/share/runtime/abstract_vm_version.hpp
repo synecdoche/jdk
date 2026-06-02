@@ -67,6 +67,7 @@ enum class vmIntrinsicID;
 
 class Abstract_VM_Version: AllStatic {
   friend class VMStructs;
+  friend class JVMCIVMStructs;
 
  protected:
   static const char*  _s_vm_release;

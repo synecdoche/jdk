@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2003, 2026, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2003, 2025, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -32,6 +32,9 @@
 #ifdef COMPILER2
 #include "opto/c2_globals.hpp"
 #endif
+#if INCLUDE_JVMCI
+#include "jvmci/jvmci_globals.hpp"
+#endif
 
 #define __ _masm->
 
@@ -56,7 +59,7 @@ static void inc_counter_np(MacroAssembler* _masm, uint& counter, Register rscrat
   __ incrementl(ExternalAddress((address)&counter), rscratch);
 }
 
-#ifdef COMPILER2
+#if COMPILER2_OR_JVMCI
 static uint& get_profile_ctr(int shift) {
   if (shift == 0) {
     return SharedRuntime::_jbyte_array_copy_ctr;
@@ -69,7 +72,7 @@ static uint& get_profile_ctr(int shift) {
     return SharedRuntime::_jlong_array_copy_ctr;
   }
 }
-#endif // COMPILER2
+#endif // COMPILER2_OR_JVMCI
 #endif // !PRODUCT
 
 void StubGenerator::generate_arraycopy_stubs() {
@@ -502,7 +505,7 @@ void StubGenerator::copy_bytes_backward(Register from, Register dest,
   __ jcc(Assembler::greater, L_copy_8_bytes); // Copy trailing qwords
 }
 
-#ifdef COMPILER2
+#if COMPILER2_OR_JVMCI
 
 // Note: Following rules apply to AVX3 optimized arraycopy stubs:-
 // - If target supports AVX3 features (BW+VL+F) then implementation uses 32 byte vectors (YMMs)
@@ -1456,7 +1459,7 @@ void StubGenerator::copy64_avx(Register dst, Register src, Register index, XMMRe
   }
 }
 
-#endif // COMPILER2
+#endif // COMPILER2_OR_JVMCI
 
 
 // Arguments:
@@ -1480,11 +1483,11 @@ address StubGenerator::generate_disjoint_byte_copy(address* entry) {
   StubId stub_id = StubId::stubgen_jbyte_disjoint_arraycopy_id;
   // aligned is always false -- x86_64 always uses the unaligned code
   const bool aligned = false;
-#ifdef COMPILER2
+#if COMPILER2_OR_JVMCI
   if (VM_Version::supports_avx512vlbw() && VM_Version::supports_bmi2() && MaxVectorSize  >= 32) {
     return generate_disjoint_copy_avx3_masked(stub_id, entry);
   }
-#endif // COMPILER2
+#endif
   GrowableArray<address> entries;
   GrowableArray<address> extras;
   int expected_entry_count = (entry != nullptr ? 2 : 1);
@@ -1630,11 +1633,11 @@ address StubGenerator::generate_conjoint_byte_copy(address nooverlap_target, add
   StubId stub_id = StubId::stubgen_jbyte_arraycopy_id;
   // aligned is always false -- x86_64 always uses the unaligned code
   const bool aligned = false;
-#ifdef COMPILER2
+#if COMPILER2_OR_JVMCI
   if (VM_Version::supports_avx512vlbw() && VM_Version::supports_bmi2() && MaxVectorSize  >= 32) {
     return generate_conjoint_copy_avx3_masked(stub_id, entry, nooverlap_target);
   }
-#endif // COMPILER2
+#endif
   GrowableArray<address> entries;
   GrowableArray<address> extras;
   int expected_entry_count = (entry != nullptr ? 2 : 1);
@@ -1774,11 +1777,11 @@ address StubGenerator::generate_disjoint_short_copy(address *entry) {
   StubId stub_id = StubId::stubgen_jshort_disjoint_arraycopy_id;
   // aligned is always false -- x86_64 always uses the unaligned code
   const bool aligned = false;
-#ifdef COMPILER2
+#if COMPILER2_OR_JVMCI
   if (VM_Version::supports_avx512vlbw() && VM_Version::supports_bmi2() && MaxVectorSize  >= 32) {
     return generate_disjoint_copy_avx3_masked(stub_id, entry);
   }
-#endif // COMPILER2
+#endif
   GrowableArray<address> entries;
   GrowableArray<address> extras;
   int expected_entry_count = (entry != nullptr ? 2 : 1);
@@ -2001,11 +2004,11 @@ address StubGenerator::generate_conjoint_short_copy(address nooverlap_target, ad
   StubId stub_id = StubId::stubgen_jshort_arraycopy_id;
   // aligned is always false -- x86_64 always uses the unaligned code
   const bool aligned = false;
-#ifdef COMPILER2
+#if COMPILER2_OR_JVMCI
   if (VM_Version::supports_avx512vlbw() && VM_Version::supports_bmi2() && MaxVectorSize  >= 32) {
     return generate_conjoint_copy_avx3_masked(stub_id, entry, nooverlap_target);
   }
-#endif // COMPILER2
+#endif
   GrowableArray<address> entries;
   GrowableArray<address> extras;
   int expected_entry_count = (entry != nullptr ? 2 : 1);
@@ -2159,11 +2162,11 @@ address StubGenerator::generate_disjoint_int_oop_copy(StubId stub_id, address* e
   }
 
   BarrierSetAssembler *bs = BarrierSet::barrier_set()->barrier_set_assembler();
-#ifdef COMPILER2
+#if COMPILER2_OR_JVMCI
   if ((!is_oop || bs->supports_avx3_masked_arraycopy()) && VM_Version::supports_avx512vlbw() && VM_Version::supports_bmi2() && MaxVectorSize  >= 32) {
     return generate_disjoint_copy_avx3_masked(stub_id, entry);
   }
-#endif // COMPILER2
+#endif
   GrowableArray<address> entries;
   GrowableArray<address> extras;
   bool add_handlers = !is_oop && !aligned;
@@ -2341,11 +2344,11 @@ address StubGenerator::generate_conjoint_int_oop_copy(StubId stub_id, address no
   }
 
   BarrierSetAssembler *bs = BarrierSet::barrier_set()->barrier_set_assembler();
-#ifdef COMPILER2
+#if COMPILER2_OR_JVMCI
   if ((!is_oop || bs->supports_avx3_masked_arraycopy()) && VM_Version::supports_avx512vlbw() && VM_Version::supports_bmi2() && MaxVectorSize  >= 32) {
     return generate_conjoint_copy_avx3_masked(stub_id, entry, nooverlap_target);
   }
-#endif // COMPILER2
+#endif
   bool add_handlers = !is_oop && !aligned;
   bool add_relocs = UseZGC && is_oop;
   bool add_extras = add_handlers || add_relocs;
@@ -2524,11 +2527,11 @@ address StubGenerator::generate_disjoint_long_oop_copy(StubId stub_id, address *
   }
 
   BarrierSetAssembler *bs = BarrierSet::barrier_set()->barrier_set_assembler();
-#ifdef COMPILER2
+#if COMPILER2_OR_JVMCI
   if ((!is_oop || bs->supports_avx3_masked_arraycopy()) && VM_Version::supports_avx512vlbw() && VM_Version::supports_bmi2() && MaxVectorSize >= 32) {
     return generate_disjoint_copy_avx3_masked(stub_id, entry);
   }
-#endif // COMPILER2
+#endif
   bool add_handlers = !is_oop && !aligned;
   bool add_relocs = UseZGC && is_oop;
   bool add_extras = add_handlers || add_relocs;
@@ -2707,11 +2710,11 @@ address StubGenerator::generate_conjoint_long_oop_copy(StubId stub_id, address n
   }
 
   BarrierSetAssembler *bs = BarrierSet::barrier_set()->barrier_set_assembler();
-#ifdef COMPILER2
+#if COMPILER2_OR_JVMCI
   if ((!is_oop || bs->supports_avx3_masked_arraycopy()) && VM_Version::supports_avx512vlbw() && VM_Version::supports_bmi2() && MaxVectorSize  >= 32) {
     return generate_conjoint_copy_avx3_masked(stub_id, entry, nooverlap_target);
   }
-#endif // COMPILER2
+#endif
   bool add_handlers = !is_oop && !aligned;
   bool add_relocs = UseZGC && is_oop;
   bool add_extras = add_handlers || add_relocs;

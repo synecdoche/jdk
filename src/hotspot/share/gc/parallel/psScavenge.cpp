@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2002, 2026, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2002, 2025, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -355,9 +355,9 @@ bool PSScavenge::invoke(bool clear_soft_refs) {
     // Let the size policy know we're starting
     size_policy->minor_collection_begin();
 
-#ifdef COMPILER2
+#if COMPILER2_OR_JVMCI
     DerivedPointerTable::clear();
-#endif // COMPILER2
+#endif
 
     reference_processor()->start_discovery(clear_soft_refs);
 
@@ -462,9 +462,9 @@ bool PSScavenge::invoke(bool clear_soft_refs) {
       heap->gc_epilogue(false);
     }
 
-#ifdef COMPILER2
+#if COMPILER2_OR_JVMCI
     DerivedPointerTable::update_pointers();
-#endif // COMPILER2
+#endif
 
     size_policy->record_gc_pause_end_instant();
 

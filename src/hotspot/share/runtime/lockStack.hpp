@@ -42,6 +42,7 @@ class Thread;
 class LockStack {
   friend class LockStackTest;
   friend class VMStructs;
+  JVMCI_ONLY(friend class JVMCIVMStructs;)
  public:
   static const int CAPACITY = 8;
  private:

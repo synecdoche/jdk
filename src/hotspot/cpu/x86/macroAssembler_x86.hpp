@@ -2071,10 +2071,10 @@ public:
   void cache_wb(Address line);
   void cache_wbsync(bool is_pre);
 
-#ifdef COMPILER2
+#ifdef COMPILER2_OR_JVMCI
   void generate_fill_avx3(BasicType type, Register to, Register value,
                           Register count, Register rtmp, XMMRegister xtmp);
-#endif // COMPILER2
+#endif // COMPILER2_OR_JVMCI
 
   void vallones(XMMRegister dst, int vector_len);
 

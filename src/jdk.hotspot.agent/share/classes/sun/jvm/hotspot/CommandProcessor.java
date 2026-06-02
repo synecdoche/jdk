@@ -65,6 +65,7 @@ import sun.jvm.hotspot.oops.RawHeapVisitor;
 import sun.jvm.hotspot.oops.Symbol;
 import sun.jvm.hotspot.oops.UnknownOopException;
 import sun.jvm.hotspot.runtime.CompiledVFrame;
+import sun.jvm.hotspot.runtime.CompilerThread;
 import sun.jvm.hotspot.runtime.JavaThread;
 import sun.jvm.hotspot.runtime.JavaVFrame;
 import sun.jvm.hotspot.runtime.Threads;

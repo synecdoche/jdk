@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1997, 2026, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1997, 2025, Oracle and/or its affiliates. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
  * This code is free software; you can redistribute it and/or modify it
@@ -478,13 +478,13 @@ class frame {
  public:
   // Memory management
   void oops_do(OopClosure* f, NMethodClosure* cf, const RegisterMap* map) {
-#ifdef COMPILER2
+#if COMPILER2_OR_JVMCI
     DerivedPointerIterationMode dpim = DerivedPointerTable::is_active() ?
                                        DerivedPointerIterationMode::_with_table :
                                        DerivedPointerIterationMode::_ignore;
-#else // COMPILER2
+#else
     DerivedPointerIterationMode dpim = DerivedPointerIterationMode::_ignore;;
-#endif // COMPILER2
+#endif
     oops_do_internal(f, cf, nullptr, dpim, map, true);
   }
 

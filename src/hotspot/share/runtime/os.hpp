@@ -173,6 +173,7 @@ public:
 };
 
 class os: AllStatic {
+  friend class JVMCIVMStructs;
   friend class MallocTracker;
 
 #ifdef ASSERT

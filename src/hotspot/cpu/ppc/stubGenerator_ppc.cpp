@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 1997, 2026, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 1997, 2025, Oracle and/or its affiliates. All rights reserved.
  * Copyright (c) 2012, 2025 SAP SE. All rights reserved.
  * DO NOT ALTER OR REMOVE COPYRIGHT NOTICES OR THIS FILE HEADER.
  *
@@ -5038,8 +5038,9 @@ void generate_lookup_secondary_supers_table_stub() {
   }
 
   void generate_compiler_stubs() {
-#ifdef COMPILER2
+#if COMPILER2_OR_JVMCI
 
+#ifdef COMPILER2
     if (UseMultiplyToLenIntrinsic) {
       StubRoutines::_multiplyToLen = generate_multiplyToLen();
     }
@@ -5057,6 +5058,7 @@ void generate_lookup_secondary_supers_table_stub() {
       StubRoutines::_montgomerySquare
         = CAST_FROM_FN_PTR(address, SharedRuntime::montgomery_square);
     }
+#endif
 
     // data cache line writeback
     if (VM_Version::supports_data_cache_line_flush()) {
@@ -5089,7 +5091,7 @@ void generate_lookup_secondary_supers_table_stub() {
       StubRoutines::_base64_encodeBlock = generate_base64_encodeBlock();
     }
 #endif
-#endif // COMPILER2
+#endif // COMPILER2_OR_JVMCI
   }
 
  public:

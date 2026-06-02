@@ -38,6 +38,7 @@ class stringStream;
 
 class VM_Version : public Abstract_VM_Version {
   friend class VMStructs;
+  friend class JVMCIVMStructs;
 
 protected:
   static int _cpu;

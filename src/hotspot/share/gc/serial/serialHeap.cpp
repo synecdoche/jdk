@@ -80,6 +80,9 @@
 #include "utilities/macros.hpp"
 #include "utilities/stack.inline.hpp"
 #include "utilities/vmError.hpp"
+#if INCLUDE_JVMCI
+#include "jvmci/jvmci.hpp"
+#endif
 
 SerialHeap* SerialHeap::heap() {
   return named_heap<SerialHeap>(CollectedHeap::Serial);
@@ -391,13 +394,13 @@ bool SerialHeap::do_young_collection(bool clear_soft_refs) {
     Universe::verify("Before GC");
   }
   gc_prologue();
-  COMPILER2_PRESENT(DerivedPointerTable::clear());
+  COMPILER2_OR_JVMCI_PRESENT(DerivedPointerTable::clear());
 
   save_marks();
 
   bool result = _young_gen->collect(clear_soft_refs);
 
-  COMPILER2_PRESENT(DerivedPointerTable::update_pointers());
+  COMPILER2_OR_JVMCI_PRESENT(DerivedPointerTable::update_pointers());
 
   // Only update stats for successful young-gc
   if (result) {
@@ -570,7 +573,7 @@ void SerialHeap::do_full_collection(bool clear_all_soft_refs) {
   }
 
   gc_prologue();
-  COMPILER2_PRESENT(DerivedPointerTable::clear());
+  COMPILER2_OR_JVMCI_PRESENT(DerivedPointerTable::clear());
   CodeCache::on_gc_marking_cycle_start();
 
   STWGCTimer* gc_timer = SerialFullGC::gc_timer();
@@ -590,7 +593,7 @@ void SerialHeap::do_full_collection(bool clear_all_soft_refs) {
   gc_tracer->report_gc_end(gc_timer->gc_end(), gc_timer->time_partitions());
   CodeCache::on_gc_marking_cycle_finish();
   CodeCache::arm_all_nmethods();
-  COMPILER2_PRESENT(DerivedPointerTable::update_pointers());
+  COMPILER2_OR_JVMCI_PRESENT(DerivedPointerTable::update_pointers());
 
   // Adjust generation sizes.
   _old_gen->compute_new_size();
@@ -781,9 +784,9 @@ void SerialHeap::gc_prologue() {
 };
 
 void SerialHeap::gc_epilogue(bool full) {
-#ifdef COMPILER2
+#if COMPILER2_OR_JVMCI
   assert(DerivedPointerTable::is_empty(), "derived pointer present");
-#endif // COMPILER2
+#endif // COMPILER2_OR_JVMCI
 
   resize_all_tlabs();
 
