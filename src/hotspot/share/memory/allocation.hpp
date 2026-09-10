@@ -176,6 +176,8 @@ class CHeapObjBase {
 template<MemTag MT>
 class CHeapObj {
  public:
+  static constexpr MemTag mem_tag = MT;
+
   ALWAYSINLINE void* operator new(size_t size) {
     return CHeapObjBase::operator new(size, MT);
   }
