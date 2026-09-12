@@ -1798,7 +1798,8 @@ Mutex* MethodData::extra_data_lock() {
   Mutex* lock = AtomicAccess::load_acquire(&_extra_data_lock);
   if (lock == nullptr) {
     // This lock could be acquired while we are holding DumpTimeTable_lock/nosafepoint
-    lock = new Mutex(Mutex::nosafepoint-1, "MDOExtraData_lock");
+    static constexpr char mutex_name[] = "MDOExtraData_lock";
+    lock = new Mutex(Mutex::nosafepoint-1, data_segment<mutex_name>);
     Mutex* old = AtomicAccess::cmpxchg(&_extra_data_lock, (Mutex*)nullptr, lock);
     if (old != nullptr) {
       // Another thread created the lock before us. Use that lock instead.

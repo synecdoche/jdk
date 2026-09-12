@@ -288,13 +288,20 @@ void Mutex::add_mutex(Mutex* var) {
 
 Mutex::~Mutex() {
   assert_owner(nullptr);
-  os::free(const_cast<char*>(_name));
+  if (_owned_name) {
+    os::free(const_cast<char*>(_name));
+  }
+  _name = nullptr;
 }
 
-Mutex::Mutex(Rank rank, const char * name, bool allow_vm_block) : _owner(nullptr) {
+Mutex::Mutex(Rank rank, const char * name, bool allow_vm_block, bool owned_name) : _owner(nullptr), _owned_name(owned_name) {
   assert(os::mutex_init_done(), "Too early!");
   assert(name != nullptr, "Mutex requires a name");
-  _name = os::strdup(name, mtSynchronizer);
+  if (_owned_name) {
+   _name = os::strdup(name, mtSynchronizer);
+  } else {
+    _name = name;
+  }
 #ifdef ASSERT
   _allow_vm_block  = allow_vm_block;
   _rank            = rank;

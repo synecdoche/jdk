@@ -35,6 +35,14 @@
 # include OS_HEADER(mutex)
 #endif
 
+template <const char* S>
+struct static_name {
+  static constexpr const char* value = S;
+};
+
+template <const char* S>
+inline constexpr static_name<S> data_segment{};
+
 
 // A Mutex/Monitor is a simple wrapper around a native lock plus condition
 // variable that supports lock ownership tracking, lock ranking for deadlock
@@ -109,6 +117,7 @@ class Mutex : public CHeapObj<mtSynchronizer> {
  protected:                              // Monitor-Mutex metadata
   PlatformMonitor _lock;                 // Native monitor implementation
   const char* _name;                     // Name of mutex/monitor
+  const bool _owned_name;
 
   // Debugging fields for naming, deadlock detection, etc. (some only used in debug mode)
 #ifndef PRODUCT
@@ -175,10 +184,14 @@ class Mutex : public CHeapObj<mtSynchronizer> {
     SafepointCheckFlag::_no_safepoint_check_flag;
 
  public:
-  Mutex(Rank rank, const char *name, bool allow_vm_block);
+  Mutex(Rank rank, const char *name, bool allow_vm_block, bool owned_name = true);
 
-  Mutex(Rank rank, const char *name) :
-    Mutex(rank, name, rank > nosafepoint ? false : true) {}
+  explicit Mutex(Rank rank, const char *name) :
+    Mutex(rank, name, rank > nosafepoint ? false : true, true) {}
+
+  template <const char* S>
+  Mutex(Rank rank, static_name<S>) :
+    Mutex(rank, S, rank > nosafepoint ? false : true, false) {}
 
   ~Mutex();
 
