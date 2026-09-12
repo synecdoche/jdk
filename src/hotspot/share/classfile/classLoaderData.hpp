@@ -67,6 +67,8 @@ class ClassLoaderData : public CHeapObj<mtClass> {
   friend class VMStructs;
 
  private:
+  static constexpr char _metaspace_lock_name[] = "MetaspaceAllocation_lock";
+
   class ChunkedHandleList {
     struct Chunk : public CHeapObj<mtClass> {
       static const size_t CAPACITY = 32;

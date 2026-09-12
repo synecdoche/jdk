@@ -35,8 +35,9 @@ Mutex* GCLogPrecious::_lock = nullptr;
 void GCLogPrecious::initialize() {
   _lines = new (mtGC) stringStream();
   _temp = new (mtGC) stringStream();
+  static constexpr char mutex_name[] = "GCLogPrecious Lock";
   _lock = new Mutex(Mutex::event, /* The lowest lock rank I could find */
-                    "GCLogPrecious Lock");
+                    data_segment<mutex_name>);
 }
 
 void GCLogPrecious::vwrite_inner(LogTargetHandle log, const char* format, va_list args) {

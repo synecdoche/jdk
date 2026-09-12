@@ -61,7 +61,8 @@ int JvmtiManageCapabilities::_can_support_value_objects_count = 0;
 Mutex* JvmtiManageCapabilities::_capabilities_lock = nullptr;
 
 void JvmtiManageCapabilities::initialize() {
-  _capabilities_lock = new Mutex(Mutex::nosafepoint, "Capabilities_lock");
+  static constexpr char mutex_name[] = "Capabilities_lock";
+  _capabilities_lock = new Mutex(Mutex::nosafepoint, data_segment<mutex_name>);
   always_capabilities = init_always_capabilities();
   onload_capabilities = init_onload_capabilities();
   always_solo_capabilities = init_always_solo_capabilities();

@@ -190,7 +190,8 @@ GCMemoryManager::GCMemoryManager(const char* name) :
   MemoryManager(name) {
   _num_collections = 0;
   _last_gc_stat = nullptr;
-  _last_gc_lock = new Mutex(Mutex::nosafepoint, "GCMemoryManager_lock");
+  static constexpr char mutex_name[] = "GCMemoryManager_lock";
+  _last_gc_lock = new Mutex(Mutex::nosafepoint, data_segment<mutex_name>);
   _current_gc_stat = nullptr;
   _num_gc_threads = 1;
   _notification_enabled = false;

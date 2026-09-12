@@ -1025,7 +1025,8 @@ ConcurrentHashTable(size_t log2size, size_t log2size_limit, size_t grow_hint, bo
   } else {
     _stats_rate = nullptr;
   }
-  _resize_lock = new Mutex(rank, "ConcurrentHashTableResize_lock");
+  static constexpr char mutex_name[] = "ConcurrentHashTableResize_lock";
+  _resize_lock = new Mutex(rank, data_segment<mutex_name>);
   _table = new InternalTable(log2size);
   assert(log2size_limit >= log2size, "bad ergo");
   _size_limit_reached.store_relaxed(_table->_log2_size == _log2_size_limit);
