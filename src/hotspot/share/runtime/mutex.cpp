@@ -287,10 +287,10 @@ void Mutex::print_name_stats(outputStream* output) {
   output->cr();
   output->print_cr("=== Mutex::print_name_stats ===");
   output->print("owned_name_count: ");
-  output->print("%lu", _owned_name_count.load_relaxed());
+  output->print("%zu", _owned_name_count.load_relaxed());
   output->cr();
   output->print("non_owned_name_count: ");
-  output->print("%lu", _non_owned_name_count.load_relaxed());
+  output->print("%zu", _non_owned_name_count.load_relaxed());
   output->cr();
 }
 
