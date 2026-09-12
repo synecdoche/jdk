@@ -280,6 +280,8 @@ static const int MAX_NUM_MUTEX = 1204;
 static Mutex* _internal_mutex_arr[MAX_NUM_MUTEX];
 Mutex** Mutex::_mutex_array = _internal_mutex_arr;
 int Mutex::_num_mutex = 0;
+Atomic<size_t> Mutex::_owned_name_count(0);
+Atomic<size_t> Mutex::_non_owned_name_count(0);
 
 void Mutex::add_mutex(Mutex* var) {
   assert(Mutex::_num_mutex < MAX_NUM_MUTEX, "increase MAX_NUM_MUTEX");
@@ -299,8 +301,10 @@ Mutex::Mutex(Rank rank, const char * name, bool allow_vm_block, bool owned_name)
   assert(name != nullptr, "Mutex requires a name");
   if (_owned_name) {
    _name = os::strdup(name, mtSynchronizer);
+   _owned_name_count.add_then_fetch(1ul, memory_order_relaxed);
   } else {
     _name = name;
+    _non_owned_name_count.add_then_fetch(1ul, memory_order_relaxed);
   }
 #ifdef ASSERT
   _allow_vm_block  = allow_vm_block;

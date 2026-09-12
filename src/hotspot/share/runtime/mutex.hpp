@@ -26,6 +26,7 @@
 #define SHARE_RUNTIME_MUTEX_HPP
 
 #include "memory/allocation.hpp"
+#include "runtime/atomic.hpp"
 #include "runtime/atomicAccess.hpp"
 #include "runtime/semaphore.hpp"
 
@@ -118,6 +119,8 @@ class Mutex : public CHeapObj<mtSynchronizer> {
   PlatformMonitor _lock;                 // Native monitor implementation
   const char* _name;                     // Name of mutex/monitor
   const bool _owned_name;
+  static Atomic<size_t> _owned_name_count;
+  static Atomic<size_t> _non_owned_name_count;
 
   // Debugging fields for naming, deadlock detection, etc. (some only used in debug mode)
 #ifndef PRODUCT
