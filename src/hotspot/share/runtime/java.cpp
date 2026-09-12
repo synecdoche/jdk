@@ -350,6 +350,7 @@ void print_statistics() {
   // Native memory tracking data
   if (PrintNMTStatistics) {
     MemTracker::final_report(tty);
+    Mutex::print_name_stats(tty);
   }
 
   if (PrintMetaspaceStatisticsAtExit) {

@@ -94,6 +94,8 @@ class Mutex : public CHeapObj<mtSynchronizer> {
 
   static void assert_no_overlap(Rank orig, Rank adjusted, int adjust);
 
+  static void print_name_stats(outputStream* output);
+
   friend Rank operator-(Rank base, int adjust) {
     Rank result = static_cast<Rank>(static_cast<int>(base) - adjust);
     DEBUG_ONLY(assert_no_overlap(base, result, adjust));

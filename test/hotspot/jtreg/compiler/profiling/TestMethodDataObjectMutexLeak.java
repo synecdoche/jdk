@@ -27,7 +27,7 @@
  * @summary Test that method unloading doesn't cause leaks of C heap allocated Mutexes in MethodData instances.
  *
  * @run main/othervm/timeout=600 -Xbatch
-        -XX:NativeMemoryTracking=summary -XX:+UnlockDiagnosticVMOptions -XX:MallocLimit=synchronization:8m -XX:-CreateCoredumpOnCrash
+        -XX:NativeMemoryTracking=summary -XX:+UnlockDiagnosticVMOptions -XX:MallocLimit=synchronization:8m -XX:-CreateCoredumpOnCrash -XX:+PrintNMTStatistics
         compiler.profiling.TestMethodDataObjectMutexLeak
  */
 

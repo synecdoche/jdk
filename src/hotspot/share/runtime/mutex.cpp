@@ -283,6 +283,17 @@ int Mutex::_num_mutex = 0;
 Atomic<size_t> Mutex::_owned_name_count(0);
 Atomic<size_t> Mutex::_non_owned_name_count(0);
 
+void Mutex::print_name_stats(outputStream* output) {
+  output->cr();
+  output->print_cr("=== Mutex::print_name_stats ===");
+  output->print("owned_name_count: ");
+  output->print("%lu", _owned_name_count.load_relaxed());
+  output->cr();
+  output->print("non_owned_name_count: ");
+  output->print("%lu", _non_owned_name_count.load_relaxed());
+  output->cr();
+}
+
 void Mutex::add_mutex(Mutex* var) {
   assert(Mutex::_num_mutex < MAX_NUM_MUTEX, "increase MAX_NUM_MUTEX");
   Mutex::_mutex_array[_num_mutex++] = var;
