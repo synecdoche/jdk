@@ -102,7 +102,8 @@ void ParCompactionManager::initialize(ParMarkBitMap* mbm) {
 
   _shadow_region_array = new (mtGC) GrowableArray<size_t >(10, mtGC);
 
-  _shadow_region_monitor = new Monitor(Mutex::nosafepoint, "CompactionManager_lock");
+  static constexpr char mutex_name[] = "CompactionManager_lock";
+  _shadow_region_monitor = new Monitor(Mutex::nosafepoint, data_segment<mutex_name>);
 }
 
 void ParCompactionManager::flush_all_string_dedup_requests() {

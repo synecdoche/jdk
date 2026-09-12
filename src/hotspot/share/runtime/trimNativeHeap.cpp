@@ -160,10 +160,12 @@ class NativeHeapTrimmerThread : public NamedThread {
     }
   }
 
+  static constexpr char _padded_monitor_name[] = "NativeHeapTrimmer_lock";
+
 public:
 
   NativeHeapTrimmerThread() :
-    _lock(new PaddedMonitor(Mutex::nosafepoint, "NativeHeapTrimmer_lock")),
+    _lock(new PaddedMonitor(Mutex::nosafepoint, data_segment<NativeHeapTrimmerThread::_padded_monitor_name>)),
     _stop(false),
     _suspend_count(0),
     _num_trims_performed(0)

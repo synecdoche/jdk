@@ -249,6 +249,12 @@ class Monitor : public Mutex {
 
   Monitor(Rank rank, const char *name) :
     Mutex(rank, name) {}
+
+  template <const char* S>
+  Monitor(Rank rank, static_name<S>) :
+    Mutex(rank, S) {}
+
+
   // default destructor
 
   // Wait until monitor is notified (or times out).
@@ -281,6 +287,10 @@ class PaddedMonitor : public Monitor {
  public:
   PaddedMonitor(Rank rank, const char *name, bool allow_vm_block) : Monitor(rank, name, allow_vm_block) {};
   PaddedMonitor(Rank rank, const char *name) : Monitor(rank, name) {};
+
+  template <const char* S>
+  PaddedMonitor(Rank rank, static_name<S>) :
+    Monitor(rank, S) {}
 };
 
 // RecursiveMutex is a minimal implementation, and has no safety and rank checks that Mutex has.

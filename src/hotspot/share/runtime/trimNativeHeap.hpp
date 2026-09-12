@@ -33,7 +33,6 @@
 class outputStream;
 
 class NativeHeapTrimmer : public AllStatic {
-
   // Pause periodic trim (if enabled).
   static void suspend_periodic_trim(const char* reason);
 

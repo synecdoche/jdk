@@ -37,7 +37,7 @@ OSThread::OSThread()
     _ucontext(nullptr),
     _expanding_stack(0),
     _alt_sig_stack(nullptr),
-    _startThread_lock(new Monitor(Mutex::event, "startThread_lock")) {
+    _startThread_lock(new Monitor(Mutex::event, data_segment<OSThread::_mutex_name>)) {
   sigemptyset(&_caller_sigmask);
 }
 
