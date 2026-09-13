@@ -73,6 +73,9 @@ class OSThreadBase: public CHeapObj<mtThread> {
   // Printing
   void print_on(outputStream* st) const;
   void print() const;
+
+protected:
+    static constexpr char _mutex_name[] = "startThread_lock";
 };
 
 

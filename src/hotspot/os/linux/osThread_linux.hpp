@@ -42,8 +42,6 @@ class OSThread : public OSThreadBase {
 
   sigset_t _caller_sigmask; // Caller's signal mask
 
-  static constexpr char _mutex_name[] = "startThread_lock";
-
  public:
   OSThread();
   ~OSThread();
