@@ -91,10 +91,20 @@ public:
 class ShenandoahSimpleLock {
 private:
   PlatformMutex   _lock; // native lock
+#ifdef ASSERT
+  Atomic<Thread*> _owner;
+#endif
 public:
   ShenandoahSimpleLock();
   void lock(bool allow_block_for_safepoint = false);
   void unlock();
+  bool owned_by_self() const {
+#ifdef ASSERT
+    return _owner.load_relaxed() == Thread::current();
+#else
+    return false;
+#endif
+  }
 };
 
 // templated reentrant lock
