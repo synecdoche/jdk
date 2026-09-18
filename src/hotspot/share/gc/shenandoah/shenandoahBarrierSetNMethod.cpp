@@ -48,6 +48,18 @@ bool ShenandoahBarrierSetNMethod::nmethod_entry_barrier(nmethod* nm) {
     return true;
   }
 
+  if (nm->is_unloading()) {
+    // We don't need to take the lock when unlinking nmethods from
+    // the Method, because it is only concurrently unlinked by
+    // the entry barrier, which acquires the per nmethod lock.
+    nm->unlink_from_method();
+
+    // We can end up calling nmethods that are unloading
+    // since we clear compiled ICs lazily. Returning false
+    // will re-resolve the call and update the compiled IC.
+    return false;
+  }
+
   ShenandoahNMethodLock* lock = ShenandoahNMethod::lock_for_nmethod(nm);
   assert(lock != nullptr, "Must be");
   ShenandoahNMethodLocker locker(lock);
@@ -60,18 +72,6 @@ bool ShenandoahBarrierSetNMethod::nmethod_entry_barrier(nmethod* nm) {
   }
 
   MACOS_AARCH64_ONLY(ThreadWXEnable wx(WXWrite, Thread::current());)
-
-  if (nm->is_unloading()) {
-    // We don't need to take the lock when unlinking nmethods from
-    // the Method, because it is only concurrently unlinked by
-    // the entry barrier, which acquires the per nmethod lock.
-    nm->unlink_from_method();
-
-    // We can end up calling nmethods that are unloading
-    // since we clear compiled ICs lazily. Returning false
-    // will re-resolve the call and update the compiled IC.
-    return false;
-  }
 
   // Handle oops and jumps.
   {
