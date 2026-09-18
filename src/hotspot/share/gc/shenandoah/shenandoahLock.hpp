@@ -87,10 +87,10 @@ public:
   }
 };
 
-// Simple lock using PlatformMonitor
+// Simple lock using PlatformMutex
 class ShenandoahSimpleLock {
 private:
-  PlatformMonitor   _lock; // native lock
+  PlatformMutex   _lock; // native lock
 public:
   ShenandoahSimpleLock();
   void lock(bool allow_block_for_safepoint = false);
