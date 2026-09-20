@@ -90,6 +90,7 @@ public:
 class ShenandoahCompiledICProtectionBehaviour : public CompiledICProtectionBehaviour {
 public:
   virtual bool lock(nmethod* nm) {
+    // ShenandoahNMethodLock is not reentrant.
     ShenandoahNMethodLock* const lock = ShenandoahNMethod::ic_lock_for_nmethod(nm);
     assert(lock != nullptr, "Not yet registered?");
     lock->lock();

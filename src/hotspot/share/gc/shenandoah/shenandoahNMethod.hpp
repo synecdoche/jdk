@@ -35,7 +35,7 @@
 
 class BarrierSetNMethod;
 
-// Use ShenandoahReentrantLock as ShenandoahNMethodLock
+// Use ShenandoahSimpleLock as ShenandoahNMethodLock
 typedef ShenandoahSimpleLock                    ShenandoahNMethodLock;
 typedef ShenandoahLocker<ShenandoahNMethodLock> ShenandoahNMethodLocker;
 

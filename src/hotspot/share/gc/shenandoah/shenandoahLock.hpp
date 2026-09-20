@@ -95,8 +95,10 @@ private:
 #endif
 public:
   ShenandoahSimpleLock();
+  DEBUG_ONLY(~ShenandoahSimpleLock() { assert(_owner.load_relaxed() == nullptr, "destroyed while held"); })
   void lock(bool allow_block_for_safepoint = false);
   void unlock();
+  // This is an assert-only check. The lock is non-reentrant.
   bool owned_by_self() const {
 #ifdef ASSERT
     return _owner.load_relaxed() == Thread::current();

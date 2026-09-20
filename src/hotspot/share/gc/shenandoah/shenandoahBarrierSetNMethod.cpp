@@ -48,10 +48,12 @@ bool ShenandoahBarrierSetNMethod::nmethod_entry_barrier(nmethod* nm) {
     return true;
   }
 
+  MACOS_AARCH64_ONLY(ThreadWXEnable wx(WXWrite, Thread::current());)
+
   if (nm->is_unloading()) {
-    // We don't need to take the lock when unlinking nmethods from
-    // the Method, because it is only concurrently unlinked by
-    // the entry barrier, which acquires the per nmethod lock.
+    // We don't need to take the lock when unlinking nmethods from the
+    // Method because the NMethodState_lock is held by
+    // Method::unlink_code.
     nm->unlink_from_method();
 
     // We can end up calling nmethods that are unloading
@@ -70,8 +72,6 @@ bool ShenandoahBarrierSetNMethod::nmethod_entry_barrier(nmethod* nm) {
     cross_modify_fence();
     return true;
   }
-
-  MACOS_AARCH64_ONLY(ThreadWXEnable wx(WXWrite, Thread::current());)
 
   // Handle oops and jumps.
   {
